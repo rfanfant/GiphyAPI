@@ -26,7 +26,7 @@ jQuery(document).ready(function () {
   }
 
   // This function handles events where one button is clicked
-  $("#add-topic").on("click", function () {
+  $("#add-topic").on("click", function (e) {
     e.preventDefault();
     // YOUR CODE GOES HERE
 
@@ -36,7 +36,7 @@ jQuery(document).ready(function () {
     // var topicInput = document.getElementById("movie-input").value;
 
     // jquery
-    var topicInput = $("<button class='btn'>").val();
+    var topicInput = $("#topic-input").val();
     console.log("Topic INPUT: ", topicInput);
 
 
