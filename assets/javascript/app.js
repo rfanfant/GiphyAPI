@@ -1,61 +1,44 @@
 
+
+// topics contains our initla set of search strings
+var topics = [" Amateur Radio", "Cycling", "Archery", "Racing", "Skeet Shooting", "Motorcycles"];
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// On document Load()
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 jQuery(document).ready(function () {
 
-  // Created an object containing topics
-  var topics = [" Amateur Radio", "Cycling", "Archery", "Racing", "Skeet Shooting", "Motorcycles"];
 
-  // Function for displaying topic button
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // renderButtons() - function to update search string buttons
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   function renderButtons() {
+
 
 
     // clear the buttons view div
     $("#buttons-view").empty();
 
-    // YOUR CODE GOES HERE
+    // Iterate through all the topics
     for (let i = 0; i < topics.length; i++) {
       const topic = topics[i];
 
-      // dynamically create movie button using jquery
+      // dynamically create search query button using jquery
       var button = "<button class='btn'>" + topic + "</button>"
-      console.log(button);
 
       //$("#buttons-view").append("<button  class='btn'>" + topic + "</button>");
       $("#buttons-view").append(button);
-
     }
   }
 
-  // This function handles events where one button is clicked
-  $("#add-topic").on("click", function (e) {
-    e.preventDefault();
-    // YOUR CODE GOES HERE
-
-    // grab the name of the button from the button clicked
-    // how do we grab the value of the button clicked using jquery
-    // javascript 
-    // var topicInput = document.getElementById("movie-input").value;
-
-    // jquery
-    var topicInput = $("#topic-input").val();
-    console.log("Topic INPUT: ", topicInput);
-
-
-    // push movieInput into the movies array
-    topics.push(topicInput);
-    renderButtons();
-  });
-
-  // Calling the renderButtons function to display the initial list of movies
-  renderButtons();
-
-
-
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // renderPage() - function to update images on the page with our search results
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   function renderPage() {
 
-    // In this case, the "this" keyword refers to the button that was clicked
-
+    // "this" keyword refers to the button that was clicked
     var topic = $(this).text();
-    console.log(topic);
 
     // Constructing a URL to search Giphy for the name of the person who said the quote
     var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
@@ -79,6 +62,7 @@ jQuery(document).ready(function () {
             // Creating a div for the gif
             var gifDiv = $("<div>");
 
+
             // Storing the result item's rating
             var rating = results[i].rating;
 
@@ -90,7 +74,13 @@ jQuery(document).ready(function () {
 
             // Giving the image tag an src attribute of a proprty pulled off the
             // result item
+
+            personImage.attr("data-animate", results[i].images.fixed_height.url);
+            personImage.attr("data-still", results[i].images.fixed_height_still.url);
+            personImage.attr("data-state", "animate");
             personImage.attr("src", results[i].images.fixed_height.url);
+            personImage.attr("id", i);
+
 
             // Appending the paragraph and personImage we created to the "gifDiv" div we created
             gifDiv.append(p);
@@ -101,57 +91,59 @@ jQuery(document).ready(function () {
           }
         }
       });
-
-
-
-
   }
-  // Event listener for all button elements
-  $(document).on("click", ".btn", renderPage)
-  // {
-  //   renderPage();
-  // }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // $(document)- onClick event handler - calls render page to update UI
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  $(document).on("click", ".btn", renderPage);
+
+
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //$(add-topic) - onClick handler () creates new buttons with a new query string 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  $("#add-topic").on("click", function (e) {
+
+    e.preventDefault();
+
+    //  retrieve the search string(i.e. "topic")
+    var topicInput = $("#topic-input").val();
+
+    // push the topic into the topics array
+    topics.push(topicInput);
+    renderButtons();
+    $(this).unbind(e);
+  });
+
+  // Calling the renderButtons function to display the initial list of movies
+  renderButtons();
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // image-view() - onClick event handler which is used to stop/start the individual gifs
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  $("#image-view").on("click" , function (event) {
+
+
+
+
+    // // look at the event to determine which gif generated the event
+    var animate = event.target.dataset.animate;
+    var still = event.target.dataset.still;
+    var state = event.target.dataset.state;
+
+    var index = event.target.id;
+
+    console.log(animate);
+    console.log(still);
+    console.log(index);
+
+    if (state === "still") {
+      $(`#${index}`).attr("src", animate);
+      $(`#${index}`).attr("data-state", "animate");
+    } else {
+      $(`#${index}`).attr("src", still);
+      $(`#${index}`).attr("data-state", "still");
+    }
 });
-
-
-// <body>
-// {/* 
-// //   <img src="https://media1.giphy.com/media/3o85xkQpyMlnBkpB9C/200_s.gif" data-still="https://media1.giphy.com/media/3o85xkQpyMlnBkpB9C/200_s.gif" data-animate="https://media1.giphy.com/media/3o85xkQpyMlnBkpB9C/200.gif" data-state="still" class="gif">
-// //   <img src="https://media2.giphy.com/media/8rFQp4kHXJ0gU/200_s.gif" data-still="https://media2.giphy.com/media/8rFQp4kHXJ0gU/200_s.gif" data-animate="https://media2.giphy.com/media/8rFQp4kHXJ0gU/200.gif" data-state="still" class="gif">
-// //   <img src="https://media3.giphy.com/media/W6LbnBigDe4ZG/200_s.gif" data-still="https://media3.giphy.com/media/W6LbnBigDe4ZG/200_s.gif" data-animate="https://media3.giphy.com/media/W6LbnBigDe4ZG/200.gif" data-state="still" class="gif">
-// //   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-// //   <script type="text/javascript">
-// //     {/* $(".gif").on("click", function() {
-// //       // The attr jQuery method allows us to get or set the value of any attribute on our HTML element
-// //       var state = $(this).attr("data-state");
-// //       // If the clicked image's state is still, update its src attribute to what its data-animate value is.
-// //       // Then, set the image's data-state to animate
-// //       // Else set src to the data-still value
-// //       if (state === "still") {
-// //         $(this).attr("src", $(this).attr("data-animate"));
-// //         $(this).attr("data-state", "animate");
-// //       } else {
-// //         $(this).attr("src", $(this).attr("data-still"));
-// //         $(this).attr("data-state", "still");
-// //       }
-// //     });
-
-
-// // $(".gif").on("click", function() {
-// //         // The attr jQuery method allows us to get or set the value of any attribute on our HTML element
-// //         var state = $(this).attr("data-state");
-// //         // If the clicked image's state is still, update its src attribute to what its data-animate value is.
-// //         // Then, set the image's data-state to animate
-// //         // Else set src to the data-still value
-// //         if (state === "still") {
-// //           $(this).attr("src", $(this).attr("data-animate"));
-// //           $(this).attr("data-state", "animate");
-// //         } else {
-// //           $(this).attr("src", $(this).attr("data-still"));
-// //           $(this).attr("data-state", "still");
-// //         }
-// //       }); */}
-// //   </script> */}
-// </body>
- //</html>
+});
