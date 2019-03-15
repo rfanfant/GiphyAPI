@@ -138,12 +138,20 @@ jQuery(document).ready(function () {
     console.log(still);
     console.log(index);
 
+    // if (state === "still") {
+    //   $(`#${index}`).attr("src", animate);
+    //   $(`#${index}`).attr("data-state", "animate");
+    // } else {
+    //   $(`#${index}`).attr("src", still);
+    //   $(`#${index}`).attr("data-state", "still");
+    // }
+
     if (state === "still") {
-      $(`#${index}`).attr("src", animate);
-      $(`#${index}`).attr("data-state", "animate");
+      $("#" + index).attr("src", animate);
+      $("#" + index).attr("data-state", "animate");
     } else {
-      $(`#${index}`).attr("src", still);
-      $(`#${index}`).attr("data-state", "still");
+      $("#" + index).attr("src", still);
+      $("#" + index).attr("data-state", "still");
     }
 });
 });
